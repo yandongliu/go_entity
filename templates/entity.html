@@ -1,0 +1,12 @@
+<h1>Entity</h1>
+
+Category: <a href="/category/{{.entity.Category.Id}}">{{.entity.Category.Name}}</a>
+
+<hr/>
+
+Attributes:
+<ul>
+{{ range $idx, $c := .entities }}
+    <li> {{$c.Category.Name}}: <a href="/entity/{{$c.Entity.Id}}">{{$c.Entity.Name}}</a>
+{{ end }}
+</ul>

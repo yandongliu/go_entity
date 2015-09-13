@@ -1,0 +1,21 @@
+<h1>Index</h1>
+
+Category: <a href="{{.category.Id}}">{{ .category.Name }}</a>
+
+<hr/>
+
+Sub categories:
+<ul>
+{{ range $index, $c := .categories }}
+    <li> <a href="/category/{{$c.Id}}">{{$c.Name}}</a>
+{{ end }}
+</ul>
+
+<hr/>
+
+Instances:
+<ul>
+{{ range $index, $c := .entities }}
+    <li> <a href="/entity/{{$c.Id}}">{{$c.Name}}</a>
+{{ end }}
+</ul>
