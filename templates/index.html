@@ -1,0 +1,21 @@
+<h1>Index</h1>
+
+
+<hr/>
+
+Entity: {{.entity.Name}} - {{.entity.Value}}
+<ul>
+{{ range $index, $c := .entities }}
+    <li> <a href="/?id={{$c.ID}}">{{$c.ID}}</a> {{$c.Name}} - {{$c.Value}}
+{{ end }}
+</ul>
+
+<hr/>
+Add an instance:
+<form action='/create/' method="POST">
+<label>Name</label>
+<input type=text name="name"/>
+<label>Value</label>
+<input type=text name="value"/>
+<input type=submit>
+</form>

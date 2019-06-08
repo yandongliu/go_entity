@@ -19,3 +19,13 @@ Instances:
     <li> <a href="/entity/{{$c.Id}}">{{$c.Name}}</a>
 {{ end }}
 </ul>
+
+<hr/>
+Add an instance:
+<form action='/category/' method="POST">
+<label>Tag UUID</label>
+<input type=text name="entity_id" value="{{ .randomId}}" />
+<label>Tag Name</label>
+<input type=text name="entity_name" />
+<input type=submit>
+</form>
