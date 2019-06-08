@@ -2,17 +2,21 @@
 
 
 <hr/>
-
+Parent : <a href="/?id={{.pid}}">{{.pname}}</a>
+<br/>
+<br/>
 Entity: {{.entity.Name}} - {{.entity.Value}}
 <ul>
 {{ range $index, $c := .entities }}
-    <li> <a href="/?id={{$c.ID}}">{{$c.ID}}</a> {{$c.Name}} - {{$c.Value}}
+    <li> <a href="/?id={{$c.ID}}&pid={{$.entity.ID}}&pname={{$.entity.Name}}">{{$c.ID}}</a> {{$c.Name}} - {{$c.Value}}
 {{ end }}
 </ul>
 
 <hr/>
 Add an instance:
 <form action='/create/' method="POST">
+<label>PID</label>
+<input type=text name="pid" value="{{.entity.ID}}"/>
 <label>Name</label>
 <input type=text name="name"/>
 <label>Value</label>

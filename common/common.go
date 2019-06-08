@@ -56,11 +56,25 @@ func GetRandomId() int {
 	return rand.Int()
 }
 
+func GetURLParamFirstStr(params url.Values, key string, thenvalue string) string {
+	if val, ok := params[key]; ok {
+		return val[0]
+	}
+	return thenvalue
+}
+
 func GetURLParamFirstInt(params url.Values, key string, thenvalue int) int {
 	if val, ok := params[key]; ok {
 		if s, err := strconv.Atoi(val[0]); err == nil {
 			return s
 		}
+	}
+	return thenvalue
+}
+
+func String2Int(s string, thenvalue int) int {
+	if i, err := strconv.Atoi(s); err == nil {
+		return i
 	}
 	return thenvalue
 }

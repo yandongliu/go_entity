@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
@@ -23,26 +24,36 @@ func (ct *Controller) indexHandler(c *gin.Context) {
 	common.DEBUG("m", m)
 	common.DEBUG("v", v)
 	params := c.Request.URL.Query()
+	pid := common.GetURLParamFirstInt(params, "pid", 1)
+	pname := common.GetURLParamFirstStr(params, "pname", "nil")
 	id := common.GetURLParamFirstInt(params, "id", 1)
 	for _, id2 := range m[id] {
 		ents = append(ents, v[id2])
 	}
 	common.DEBUG("ents", ents)
 	c.HTML(http.StatusOK, "index.html", gin.H{
+		"pid":      pid,
+		"pname":    pname,
 		"entity":   v[id],
 		"entities": ents,
 	})
 }
 
 func (ct *Controller) createHandler(c *gin.Context) {
-	name := c.PostForm("name")
-	value := c.PostForm("value")
-	common.DEBUG("handler create", name, value)
-	_, err := dblib.CreateEntity(name, value, ct.db)
-	if err != nil {
-		c.String(200, "Error!")
+	sPid := c.PostForm("pid")
+	if pid, err := strconv.Atoi(sPid); err == nil {
+		name := c.PostForm("name")
+		value := c.PostForm("value")
+		e, err := dblib.CreateEntity(name, value, ct.db)
+		if err != nil {
+			c.String(200, "Error!")
+		} else {
+			dblib.CreateEntityPair(pid, e.ID, ct.db)
+			c.Redirect(http.StatusSeeOther, "/?id="+sPid)
+		}
 	} else {
-		c.Redirect(http.StatusSeeOther, "/")
+		common.DEBUG("error", err)
+		c.String(200, "Str Conv Error!:"+sPid)
 	}
 }
 

@@ -125,7 +125,7 @@ func CreateEntity(name, value string, db *sql.DB) (common.Entity, error) {
 		}
 		defer stmt.Close()
 		var id int
-		err = stmt.QueryRow(name, value).Scan(&id)
+		err = stmt.QueryRow(strings.ToUpper(name), value).Scan(&id)
 		if err != nil {
 			return e, err
 		}
