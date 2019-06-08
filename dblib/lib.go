@@ -32,7 +32,7 @@ func ReadAllEntities(id int, m map[int][]int, v map[int]common.Entity, db *sql.D
 func ReadChildIds(id int, db *sql.DB) []int {
 	var id2 int
 	r := []int{}
-	rows, err := db.Query("SELECT entity_id2 FROM entity_entity where entity_id1 = $1", id)
+	rows, err := db.Query("SELECT id2 FROM entity_entity where id1 = $1", id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -115,21 +115,33 @@ func ReadEntityByNameAndValue(name, value string, db *sql.DB) common.Entity {
 	return e
 }
 
-func CreateEntity(name, value string, db *sql.DB) common.Entity {
+func CreateEntity(name, value string, db *sql.DB) (common.Entity, error) {
 	e := ReadEntityByNameAndValue(name, value, db)
 	if e.ID == -1 {
-		common.DEBUG("not found", e)
-		_, err := db.Exec(
-			"INSERT into ENTITY (name, value) VALUES ($1, $2)",
-			strings.ToUpper(name),
-			value)
-		if err != nil { //other errors, log it
-			panic(err)
+		common.DEBUG("Entity not found", name, value)
+		stmt, err := db.Prepare("INSERT into ENTITY (name, value) VALUES ($1, $2) RETURNING id")
+		if err != nil {
+			return e, err
 		}
+		defer stmt.Close()
+		var id int
+		err = stmt.QueryRow(name, value).Scan(&id)
+		if err != nil {
+			return e, err
+		}
+		common.DEBUG("New Entity ID", id)
+		e.Set(id, strings.ToUpper(name), value)
 	} else {
-		common.DEBUG("found", e)
+		common.DEBUG("Entiy found", e)
 	}
-	return e
+	return e, nil
+}
+
+func CreateEntityPair(id1, id2 int, db *sql.DB) error {
+	_, err := db.Exec(
+		"INSERT into ENTITY_ENTITY (id1, id2) VALUES ($1, $2)",
+		id1, id2)
+	return err
 }
 
 func GetDB() *sql.DB {

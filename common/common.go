@@ -11,6 +11,12 @@ import (
 
 var DEBUG_MODE = true
 
+func PrintErr(err error) {
+	if err != nil {
+		DEBUG("error", err)
+	}
+}
+
 func DEBUG(msg string, things ...interface{}) {
 	if !DEBUG_MODE {
 		return

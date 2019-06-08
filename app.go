@@ -38,8 +38,12 @@ func (ct *Controller) createHandler(c *gin.Context) {
 	name := c.PostForm("name")
 	value := c.PostForm("value")
 	common.DEBUG("handler create", name, value)
-	dblib.CreateEntity(name, value, ct.db)
-	c.Redirect(http.StatusSeeOther, "/")
+	_, err := dblib.CreateEntity(name, value, ct.db)
+	if err != nil {
+		c.String(200, "Error!")
+	} else {
+		c.Redirect(http.StatusSeeOther, "/")
+	}
 }
 
 func (ct *Controller) entityHandler(c *gin.Context) {
@@ -51,7 +55,7 @@ func (ct *Controller) entityHandler(c *gin.Context) {
 	})
 }
 
-func setRouters(ct *Controller) {
+func setRoutersAndRun(ct *Controller) {
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*.html")
 	router.GET("/", ct.indexHandler)
@@ -68,5 +72,5 @@ func main() {
 	db := dblib.GetDB()
 	defer db.Close()
 	ct := &Controller{db: db}
-	setRouters(ct)
+	setRoutersAndRun(ct)
 }
